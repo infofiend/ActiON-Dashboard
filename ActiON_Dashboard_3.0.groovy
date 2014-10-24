@@ -122,6 +122,36 @@ def selectPhrases() {
         	input "link3title", "text", title:"Link 3 Title", required: false
             input "link3url", "text", title:"Link 3 URL", required: false
         }
+            
+
+        section("Camera 1 "){
+			input "camera1ip", "text", title: "Camera 1 IP Address", description: "Your Camera IP", required: false
+            input "camera1url", "text", title: "Camera 1 URL", description: "videostream.cgi or axis-cgi/mjpg/video.cgi?", required: false
+			input "camera1user", "text", title: "Camera 1 Username", description: "Your Camera UserName", required: false
+        	input "camera1pwd", "text", title: "Camera 1 Password", description: "Your Camera Password", required: false
+            input "camera1width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
+            input "camera1height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
+
+
+		}
+        
+        section("Camera 2 "){
+			input "camera2ip", "text", title: "Camera 2 IP Address", description: "Your Camera IP", required: false
+            input "camera2url", "text", title: "Camera 2 URL", description: "videostream.cgi or axis-cgi/mjpg/video.cgi?", required: false
+			input "camera2user", "text", title: "Camera 2 Username", description: "Your Camera UserName", required: false
+        	input "camera2pwd", "text", title: "Camera 2 Password", description: "Your Camera Password", required: false
+            input "camera2width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
+            input "camera2height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
+		}
+        
+        section("Camera 3 "){
+		input "camera3ip", "text", title: "Camera 3 IP Address", description: "Your Camera IP", required: false
+        input "camera3url", "text", title: "Camera 3 URL", description: "videostream.cgi or axis-cgi/mjpg/video.cgi?", required: false
+		input "camera3user", "text", title: "Camera 3 Username", description: "Your Camera UserName", required: false
+        input "camera3pwd", "text", title: "Camera 3 Password", description: "Your Camera Password", required: false
+        input "camera3width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
+        input "camera3height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
+		}
     }
 }
 
@@ -1448,6 +1478,42 @@ def renderDevice(device) {
     
 }
 
+def renderCamera1() {
+"""
+<div class="st-tile link" deviceType="link">
+	<div class="st-tile-content">
+    	<div class="st-title">
+        	<img src="http://${camera1ip}/${camera1url}user=${camera1user}&pwd=${camera1pwd}" width=${camera1width} height=${camera1height}>
+        </div>
+	</div>
+</div>
+"""
+}
+
+def renderCamera2() {
+"""
+<div class="st-tile link" deviceType="link">
+	<div class="st-tile-content">
+    	<div class="st-title">
+        	<img src="http://${camera2ip}/${camera2url}user=${camera2user}&pwd=${camera2pwd}" width=${camera2width} height=${camera2width}>
+        </div>
+	</div>
+</div>
+"""
+}
+
+def renderCamera3() {
+"""
+<div class="st-tile link" deviceType="link">
+	<div class="st-tile-content">
+    	<div class="st-title">
+        	<img src="http://${camera3ip}/${camera3url}user=${camera3user}&pwd=${camera3pwd}" width=${camera3width} height=${camera3width}>
+        </div>
+	</div>
+</div>
+"""
+}
+
 def body() {
     
 	"""
@@ -1458,6 +1524,9 @@ def body() {
             ${renderMode()}
             ${renderHelloHome()}
             ${renderDevices()}
+	     ${renderCamera1()}
+            ${renderCamera2()}
+            ${renderCamera3()}
             ${renderLink(1)}
             ${renderLink(2)}
             ${renderLink(3)}
