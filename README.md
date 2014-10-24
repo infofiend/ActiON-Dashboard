@@ -1,4 +1,4 @@
-ActiON Dashboard
+ActiON Dashboard - with Sonos 
 ======
 
 ActiON Dashboard is a web application to contol and view status of your devices. 
@@ -8,6 +8,9 @@ It is optimized for mobile devices as well as large screens.
 Once the dashboard url is generated, it could be used in any modern browser.
 
 There is no need to install SmartThings Mobile application on the device that will run the dashboard.
+
+***THIS FORK slightly MODIFIES THE ORIGINAL CODE by replacing the lock tiles with Sonos tiles.  Any Sonos speaker that you have can now be toggled -- Play / Pause -- by pressing on a pretty little orange tile.****
+
 
 Create SmartApp
 ======
