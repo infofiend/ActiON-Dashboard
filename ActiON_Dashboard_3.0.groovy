@@ -27,7 +27,7 @@ definition(
     name: "ActiON Dashboard",
     namespace: "625alex",
     author: "Alex Malikov",
-    description: "Self contained web dashboard.",
+    description: "Self contained web dashboard - with Sonos",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartthings-device-icons/unknown/thing/thing-circle.png",
     iconX2Url: "https://s3.amazonaws.com/smartthings-device-icons/unknown/thing/thing-circle@2x.png",
@@ -51,7 +51,7 @@ preferences {
             input "switches", "capability.switch", title: "Which Switches?", multiple: true, required: false
             input "dimmers", "capability.switchLevel", title: "Which Dimmers?", multiple: true, required: false
             input "momentaries", "capability.momentary", title: "Which Momentary Switches?", multiple: true, required: false
-            input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: false
+             input "sonos", "capability.musicPlayer", title: "Which Speakers?", multiple: true, required: false
         }
 
         section("View state of these things...") {
@@ -122,36 +122,6 @@ def selectPhrases() {
         	input "link3title", "text", title:"Link 3 Title", required: false
             input "link3url", "text", title:"Link 3 URL", required: false
         }
-            
-
-        section("Camera 1... "){
-			input "camera1ip", "text", title: "IP/Port (Port IS Optional)", description: "xx.xx.xx.xx:xxxx", required: false
-            input "camera1url", "text", title: "URL\nAxis Url= axis-cgi/mjpg/video.cgi?\nFoscam Url= videostream.cgi", description: "Enter Camera URL", required: false
-			input "camera1user", "text", title: "Username", description: "Enter Camera Username", required: false
-        	input "camera1pwd", "text", title: "Password", description: "Enter Camera Password", required: false
-            input "camera1width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
-            input "camera1height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
-
-
-		}
-        
-        section("Camera 2... "){
-			input "camera2ip", "text", title: "IP/Port (Port IS Optional)", description: "xx.xx.xx.xx:xxxx", required: false
-            input "camera2url", "text", title: "URL\nAxis Url= axis-cgi/mjpg/video.cgi?\nFoscam Url= videostream.cgi", description: "Enter Camera URL", required: false
-			input "camera2user", "text", title: "Username", description: "Enter Camera Username", required: false
-        	input "camera2pwd", "text", title: "Password", description: "Enter Camera Password", required: false
-            input "camera2width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
-            input "camera2height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
-		}
-        
-        section("Camera 3... "){
-		input "camera3ip", "text", title: "IP/Port (Port IS Optional)", description: "xx.xx.xx.xx:xxxx", required: false
-        input "camera3url", "text", title: "URL\nAxis Url= axis-cgi/mjpg/video.cgi?\nFoscam Url= videostream.cgi", description: "Enter Camera URL", required: false
-		input "camera3user", "text", title: "Username", description: "Enter Camera Username", required: false
-        input "camera3pwd", "text", title: "Password", description: "Enter Camera Password", required: false
-        input "camera3width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
-        input "camera3height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
-		}
     }
 }
 
@@ -227,19 +197,22 @@ def command() {
         if (device) {
         	device.setLevel(Math.min(value as Integer, 99))
         }
-    } else if (type == "lock") {
-    	device = locks?.find{it.id == id}
-        attribute = "lock"
+    } else if (type == "sonos") {
+    	device = sonos?.find{it.id == id}
+        attribute = "sonos"
         
         if (device) {
-        	log.debug "current lock status ${device.currentValue('lock')}"
-        	if(device.currentValue('lock') == "locked") {
-                device.unlock()
-                endState = "unlocked"
-            } else {
-                device.lock()
-                endState = "locked"
-            }
+   			def currentStatus = device.currentValue("status")
+           	log.debug "current sonos status is ${currentStatus}"
+
+			if (currentStatus == "playing") {
+				sonos.pause()
+           //     endstate = "paused"
+			}
+			else {
+				sonos.play()
+           //     endstate = "playing"                
+			}
             
         }
     } else if (type == "mode") {
@@ -346,7 +319,7 @@ def list() {
 
 def data() {
     [
-    	locks: locks?.collect{[type: "lock", id: it.id, name: it.displayName, status: it.currentValue('lock') == "locked" ? "locked" : "unlocked"]}?.sort{it.name},
+    	sonos: sonos?.collect{[type: "sonos", id: it.id, name: it.displayName, status: it.currentValue('status') == "playing" ? "on" : "off"]}?.sort{it.name},
         switches: switches?.collect{[type: "switch", id: it.id, name: it.displayName, status: it.currentValue('switch')]}?.sort{it.name},
         dimmers: dimmers?.collect{[type: "dimmer", id: it.id, name: it.displayName, status: it.currentValue('switch'), level: it.currentValue('level')]}?.sort{it.name},
         momentary: momentaries?.collect{[type: "momentary", id: it.id, name: it.displayName]}?.sort{it.name},
@@ -401,7 +374,7 @@ def script() {
            return false;
         });
         
-    	\$(".lock, .switch").click(function() {
+    	\$(".sonos, .switch").click(function() {
 			${viewOnly ? "return false;" : ""}
             animateToggle(\$(this));
             sendCommand(\$(this).attr("deviceType"), \$(this).attr("deviceId"), "toggle");
@@ -563,8 +536,8 @@ def script() {
     	var icons = {
         "fa fa-toggle-off" : "fa fa-toggle-on",
         "fa fa-toggle-on" : "fa fa-toggle-off",
-        "fa fa-lock" : "fa fa-unlock-alt",
-        "fa fa-unlock-alt" : "fa fa-lock"
+        "fa fa-sonos" : "fa fa-sonos-alt",
+        "fa fa-sonos-alt" : "fa fa-sonos"
         }
         
         return icons[icon];
@@ -583,7 +556,7 @@ def style() {
 	cursor: pointer;
 }
 
-.lock, .switch, .dimmer, .momentary {
+.sonos, .switch, .dimmer, .momentary {
 	cursor: ${viewOnly ? "default" : "pointer"};
 }
 
@@ -653,7 +626,7 @@ def style() {
 	background-color: #2d89ef;
 }
 
-.lock .st-tile-content {
+.sonos .st-tile-content {
 	background-color: #da532c;
 }
 
@@ -1262,15 +1235,15 @@ def renderSwitch(device) {
 }
 
 
-def renderLock(device) {
+def renderSonos(device) {
 """
-<div id="lock_$device.id" class="st-tile lock" deviceId="$device.id" deviceType="lock">
+<div id="sonos_$device.id" class="st-tile sonos" deviceId="$device.id" deviceType="sonos">
 	<div class="st-tile-content">
     	<div class="st-title">
             $device.name
         </div>
         <div class="st-icon">
-        	<i class="fa ${device.status == "locked" ? "fa-lock" : "fa-unlock-alt"}"></i>
+        	<i class="fa ${device.status == "playing" ? "fa-sonos" : "fa-sonos-alt"}"></i>
         </div>
         <i class="spin fa fa-refresh fa-spin"></i>
 	</div>
@@ -1467,7 +1440,7 @@ def renderDevice(device) {
     if (!device) return ""
     if (device.type == "dimmer") return renderDimmer(device)
     if (device.type == "switch") return renderSwitch(device)
-    if (device.type == "lock") return renderLock(device)
+    if (device.type == "sonos") return renderSonos(device)
     if (device.type == "presence") return renderPresence(device)
     if (device.type == "contact") return renderContact(device)
     if (device.type == "temperature") return renderTemperature(device)
@@ -1476,42 +1449,6 @@ def renderDevice(device) {
     if (device.type == "momentary") return renderMomentary(device)
     else return ""
     
-}
-
-def renderCamera1() {
-"""
-<div class="st-tile link" deviceType="link">
-	<div class="st-tile-content">
-    	<div class="st-title">
-        	<img src="http://${camera1ip}/${camera1url}user=${camera1user}&pwd=${camera1pwd}" width=${camera1width} height=${camera1height}>
-        </div>
-	</div>
-</div>
-"""
-}
-
-def renderCamera2() {
-"""
-<div class="st-tile link" deviceType="link">
-	<div class="st-tile-content">
-    	<div class="st-title">
-        	<img src="http://${camera2ip}/${camera2url}user=${camera2user}&pwd=${camera2pwd}" width=${camera2width} height=${camera2width}>
-        </div>
-	</div>
-</div>
-"""
-}
-
-def renderCamera3() {
-"""
-<div class="st-tile link" deviceType="link">
-	<div class="st-tile-content">
-    	<div class="st-title">
-        	<img src="http://${camera3ip}/${camera3url}user=${camera3user}&pwd=${camera3pwd}" width=${camera3width} height=${camera3width}>
-        </div>
-	</div>
-</div>
-"""
 }
 
 def body() {
@@ -1524,9 +1461,6 @@ def body() {
             ${renderMode()}
             ${renderHelloHome()}
             ${renderDevices()}
-	    ${renderCamera1()}
-            ${renderCamera2()}
-            ${renderCamera3()}
             ${renderLink(1)}
             ${renderLink(2)}
             ${renderLink(3)}
