@@ -124,31 +124,31 @@ def selectPhrases() {
         }
             
 
-        section("Camera 1 "){
-			input "camera1ip", "text", title: "Camera 1 IP Address", description: "Your Camera IP", required: false
-            input "camera1url", "text", title: "Camera 1 URL", description: "videostream.cgi or axis-cgi/mjpg/video.cgi?", required: false
-			input "camera1user", "text", title: "Camera 1 Username", description: "Your Camera UserName", required: false
-        	input "camera1pwd", "text", title: "Camera 1 Password", description: "Your Camera Password", required: false
+        section("Camera 1... "){
+			input "camera1ip", "text", title: "IP/Port (Port IS Optional)", description: "xx.xx.xx.xx:xxxx", required: false
+            input "camera1url", "text", title: "URL\nAxis Url= axis-cgi/mjpg/video.cgi?\nFoscam Url= videostream.cgi", description: "Enter Camera URL", required: false
+			input "camera1user", "text", title: "Username", description: "Enter Camera Username", required: false
+        	input "camera1pwd", "text", title: "Password", description: "Enter Camera Password", required: false
             input "camera1width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
             input "camera1height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
 
 
 		}
         
-        section("Camera 2 "){
-			input "camera2ip", "text", title: "Camera 2 IP Address", description: "Your Camera IP", required: false
-            input "camera2url", "text", title: "Camera 2 URL", description: "videostream.cgi or axis-cgi/mjpg/video.cgi?", required: false
-			input "camera2user", "text", title: "Camera 2 Username", description: "Your Camera UserName", required: false
-        	input "camera2pwd", "text", title: "Camera 2 Password", description: "Your Camera Password", required: false
+        section("Camera 2... "){
+			input "camera2ip", "text", title: "IP/Port (Port IS Optional)", description: "xx.xx.xx.xx:xxxx", required: false
+            input "camera2url", "text", title: "URL\nAxis Url= axis-cgi/mjpg/video.cgi?\nFoscam Url= videostream.cgi", description: "Enter Camera URL", required: false
+			input "camera2user", "text", title: "Username", description: "Enter Camera Username", required: false
+        	input "camera2pwd", "text", title: "Password", description: "Enter Camera Password", required: false
             input "camera2width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
             input "camera2height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
 		}
         
-        section("Camera 3 "){
-		input "camera3ip", "text", title: "Camera 3 IP Address", description: "Your Camera IP", required: false
-        input "camera3url", "text", title: "Camera 3 URL", description: "videostream.cgi or axis-cgi/mjpg/video.cgi?", required: false
-		input "camera3user", "text", title: "Camera 3 Username", description: "Your Camera UserName", required: false
-        input "camera3pwd", "text", title: "Camera 3 Password", description: "Your Camera Password", required: false
+        section("Camera 3... "){
+		input "camera3ip", "text", title: "IP/Port (Port IS Optional)", description: "xx.xx.xx.xx:xxxx", required: false
+        input "camera3url", "text", title: "URL\nAxis Url= axis-cgi/mjpg/video.cgi?\nFoscam Url= videostream.cgi", description: "Enter Camera URL", required: false
+		input "camera3user", "text", title: "Username", description: "Enter Camera Username", required: false
+        input "camera3pwd", "text", title: "Password", description: "Enter Camera Password", required: false
         input "camera3width", "number", title: "Video Width", description: "128 for 1x1 tile", required: false
         input "camera3height", "number", title: "Video Height", description: "128 for 1x1 tile", required: false
 		}
@@ -1524,7 +1524,7 @@ def body() {
             ${renderMode()}
             ${renderHelloHome()}
             ${renderDevices()}
-	     ${renderCamera1()}
+	    ${renderCamera1()}
             ${renderCamera2()}
             ${renderCamera3()}
             ${renderLink(1)}
