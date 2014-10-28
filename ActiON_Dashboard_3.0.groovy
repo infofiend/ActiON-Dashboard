@@ -24,10 +24,10 @@
  *
  */
 definition(
-    name: "ActiON Dashboard",
+    name: "ActiON Dashboard (Sonos version)",
     namespace: "625alex",
     author: "Alex Malikov",
-    description: "Self contained web dashboard - with Sonos",
+    description: "Self contained web dashboard - with Sonos instead of locks.  If playing, 1 tap = next song & 2 taps WITHIN 5 seconds = pause.",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartthings-device-icons/unknown/thing/thing-circle.png",
     iconX2Url: "https://s3.amazonaws.com/smartthings-device-icons/unknown/thing/thing-circle@2x.png",
@@ -51,7 +51,7 @@ preferences {
             input "switches", "capability.switch", title: "Which Switches?", multiple: true, required: false
             input "dimmers", "capability.switchLevel", title: "Which Dimmers?", multiple: true, required: false
             input "momentaries", "capability.momentary", title: "Which Momentary Switches?", multiple: true, required: false
-             input "sonos", "capability.musicPlayer", title: "Which Speakers?", multiple: true, required: false
+            input "sonos", "capability.musicPlayer", title: "Which Speakers?", multiple: true, required: false
         }
 
         section("View state of these things...") {
@@ -206,12 +206,25 @@ def command() {
            	log.debug "current sonos status is ${currentStatus}"
 
 			if (currentStatus == "playing") {
-				sonos.pause()
-           //     endstate = "paused"
+				def lastTime = state.lastSonosActionTimeStamp
+				if (lastTime == null || now() - lastTime >= 5000) {
+					log.debug "Invoking next track because more than 5 seconds minutes have elapsed since last button action."
+                    sonos.nextTrack()
+				}
+				else {
+					log.debug "Invoking next track because less than 5 seconds minutes have elapsed since last button action."
+					sonos.pause()
+				}
+	
+    			state.lastSonosActionTimeStamp = now()    
+
+			
+		//	    endstate = "paused"
 			}
 			else {
 				sonos.play()
-           //     endstate = "playing"                
+	       		state.lastSonosActionTimeStamp = now()                    
+        //        endstate = "playing"                
 			}
             
         }
@@ -241,6 +254,11 @@ def command() {
     
     render contentType: "application/javascript", data: "${params.callback}(${response.encodeAsJSON()})"
 }
+
+
+
+
+
 
 /*
 	Hacked varsion of long poll. Will wait up to 15 seconds for the status to update. If times out without
@@ -319,7 +337,7 @@ def list() {
 
 def data() {
     [
-    	sonos: sonos?.collect{[type: "sonos", id: it.id, name: it.displayName, status: it.currentValue('status') == "playing" ? "on" : "off"]}?.sort{it.name},
+    	sonos: sonos?.collect{[type: "sonos", id: it.id, name: it.displayName, status: it.currentValue('status') == "playing" ? "playing" : "paused"]}?.sort{it.name},
         switches: switches?.collect{[type: "switch", id: it.id, name: it.displayName, status: it.currentValue('switch')]}?.sort{it.name},
         dimmers: dimmers?.collect{[type: "dimmer", id: it.id, name: it.displayName, status: it.currentValue('switch'), level: it.currentValue('level')]}?.sort{it.name},
         momentary: momentaries?.collect{[type: "momentary", id: it.id, name: it.displayName]}?.sort{it.name},
