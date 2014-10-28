@@ -11,8 +11,8 @@ There is no need to install SmartThings Mobile application on the device that wi
 
 ***THIS FORK slightly MODIFIES THE ORIGINAL CODE by replacing the lock tiles with Sonos tiles.  Any Sonos speaker that you have can now be controlled by pressing on a pretty little orange tile as follows:***  
 
-  ***If paused, button press = play.***  
-  ***If playing, 1 button press = next track & 2 button presses within 5 seconds = pause..***
+  ***If paused, 1 button press = play.***  
+  ***If playing, 1 button press = next track & 2 button presses within 5 seconds = pause.***
 
 
 Create SmartApp
